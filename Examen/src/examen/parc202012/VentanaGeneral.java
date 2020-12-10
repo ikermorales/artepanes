@@ -95,13 +95,6 @@ public class VentanaGeneral extends JFrame {
 						e1.printStackTrace();
 					}
 
-					ArrayList<String> columnas = new ArrayList<String>();
-					columnas.add("NOMBRE");
-					columnas.add("CORREO");
-					columnas.add("DURACION");
-					columnas.add("HORAU");
-					columnas.add("HORAS");
-
 					for (int i = 0; i < tabla.size(); i++) {
 
 						try {
