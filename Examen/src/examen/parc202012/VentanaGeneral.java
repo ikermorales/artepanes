@@ -32,6 +32,7 @@ public class VentanaGeneral extends JFrame {
 	private ArrayList<JInternalFrame> misSubventanas;
 	private Runnable runEnCierre;
 	private JMenuItem itemBases;
+	private JMenuItem itemOrdenarNombre;
 
 	public VentanaGeneral(ArrayList<Tabla> tablas) {
 		
@@ -146,6 +147,25 @@ public class VentanaGeneral extends JFrame {
 
 			}
 		});
+		
+		itemOrdenarNombre = new JMenuItem("Ordenar Nombre");
+		itemOrdenarNombre.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (Tabla tabla : tablas) {
+					tabla.ordenaTablaString(0);
+					repaint(); //TXALO PARA TY
+				}
+			
+			}
+		});
+		menuAcciones.add(itemOrdenarNombre);
+		
+		
+		
+		
+		
 		menuBar.add(menuAcciones);
 
 		setJMenuBar(menuBar);
