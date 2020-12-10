@@ -2,24 +2,31 @@ package examen.parc202012;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.List;
 import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class VentanaGeneral extends JFrame {
-	
+
 	public static Color COLOR_GRIS_CLARITO = new Color( 220, 220, 220 );
-	
+
 	private JDesktopPane desktop;
 	private JLabel lMensaje = new JLabel( " " );
 	private JMenu menuVentanas;
 	private JMenu menuAcciones;
 	private ArrayList<JInternalFrame> misSubventanas;
 	private Runnable runEnCierre;
-	
-	public VentanaGeneral() {
+	private JMenuItem itemBases;
+
+	public VentanaGeneral(ArrayList<Tabla> tablas) {
 		misSubventanas = new ArrayList<>();
 		// Configuración general
 		setTitle( "Ventana General" );
@@ -42,22 +49,101 @@ public class VentanaGeneral extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		menuVentanas = new JMenu( "Ventanas" ); menuVentanas.setMnemonic( KeyEvent.VK_V );
 		menuBar.add( menuVentanas );
+
+
 		menuAcciones = new JMenu( "Acciones" ); menuAcciones.setMnemonic( KeyEvent.VK_A );
+		itemBases = new JMenuItem("Basear");
+		menuAcciones.add(itemBases);
+
+		try {
+
+			Class.forName("org.sqlite.JDBC");
+
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		} 
+
+
+		itemBases.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int contador = 0;
+				String nombreTabla = "";
+				for (Tabla tabla : tablas) {
+
+					try {
+						Connection conn = DriverManager.getConnection("jdbc:sqlite:alumnitos.db");
+						Statement stmt = (Statement) conn.createStatement();
+
+						contador++;
+						nombreTabla = "Tabla" + contador;
+
+						String instruccionBorrar = "DROP TABLE IF EXISTS " + nombreTabla+ ";";
+						int rs = stmt.executeUpdate(instruccionBorrar);
+						//System.out.println(instruccionBorrar);
+
+						String instruccionCrear = "CREATE TABLE " + nombreTabla + "(NOMBRE VARCHAR(25), CORREO VARCHAR(50), DURACION VARCHAR(10), HORAU VARCHAR(5), HORAS VARCHAR(5));";
+						//System.out.println(instruccionCrear);
+						int rs2 = stmt.executeUpdate(instruccionCrear);
+
+
+						stmt.close();
+						conn.close();
+
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+
+					ArrayList<String> columnas = new ArrayList<String>();
+					columnas.add("NOMBRE");
+					columnas.add("CORREO");
+					columnas.add("DURACION");
+					columnas.add("HORAU");
+					columnas.add("HORAS");
+
+					for (int i = 0; i < tabla.size(); i++) {
+
+						try {
+							Connection conn = DriverManager.getConnection("jdbc:sqlite:alumnitos.db");
+							Statement stmt = (Statement) conn.createStatement();
+							String instruccion = "INSERT INTO " + nombreTabla + " VALUES('"
+									+ tabla.get(i,0) + "', '" + tabla.get(i,1) + "' , '"
+									+ tabla.get(i,2) + "' , '" + tabla.get(i,3) + "' , '"
+									+ tabla.get(i,4) + "');";
+							System.out.println(instruccion);
+
+							int rs2 = stmt.executeUpdate(instruccion);
+
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+
+
+
+					}
+				}
+
+			}
+		});
 		menuBar.add( menuAcciones );
+
+
 		setJMenuBar( menuBar );
+
 	}
-	
+
 	public void setEnCierre( Runnable runnable ) {
 		runEnCierre = runnable;
 	}
-	
-		private ActionListener alMenu = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String vent = e.getActionCommand();
-				for (JInternalFrame vd : misSubventanas) if (vd.getName().equals( vent )) { vd.setVisible( true ); vd.moveToFront(); return; }
-			}
-		};
+
+	private ActionListener alMenu = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String vent = e.getActionCommand();
+			for (JInternalFrame vd : misSubventanas) if (vd.getName().equals( vent )) { vd.setVisible( true ); vd.moveToFront(); return; }
+		}
+	};
 	public void addVentanaInterna( JInternalFrame f, String codVentana ) {
 		desktop.add( f );
 		JMenuItem menuItem = new JMenuItem( codVentana ); 
@@ -67,32 +153,32 @@ public class VentanaGeneral extends JFrame {
 		misSubventanas.add( f );
 		f.setName( codVentana );
 	}
-	
+
 	public void setMensaje( String mens, Color... colorFondo ) {
 		Color fondo = (colorFondo.length>0) ? colorFondo[0] : COLOR_GRIS_CLARITO; 
 		if (mens==null || mens.isEmpty()) mens = " ";
 		lMensaje.setText( mens );
 		lMensaje.setBackground( fondo );
 	}
-	
+
 	public void setMensajeSinCambioColor( String mens ) {
 		if (mens==null || mens.isEmpty()) mens = " ";
 		lMensaje.setText( mens );
 	}
-	
+
 	public void addMenuAccion( String textoMenu, ActionListener accion ) {
 		JMenuItem menuItem = new JMenuItem( textoMenu );
 		menuItem.setActionCommand( textoMenu );
 		menuItem.addActionListener( accion );
 		menuAcciones.add( menuItem );
 	}
-	
+
 	public ArrayList<JInternalFrame> getSubventanas() {
 		return misSubventanas;
 	}
-	
+
 	public JDesktopPane getJDesktopPane() {
 		return desktop;
 	}
-	
+
 }
