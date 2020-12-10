@@ -1,6 +1,6 @@
 package examen.parc202012;
 
-import java.awt.BorderLayout;
+import java.awt.BorderLayout; 
 import java.awt.Color;
 import java.awt.List;
 import java.awt.event.*;
@@ -10,11 +10,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class VentanaGeneral extends JFrame {
+	
+	private static final Logger LOGGER = Logger.getLogger(VentanaGeneral.class.getName()); //LOGGERS
 
 	public static Color COLOR_GRIS_CLARITO = new Color(220, 220, 220);
 
@@ -27,6 +34,28 @@ public class VentanaGeneral extends JFrame {
 	private JMenuItem itemBases;
 
 	public VentanaGeneral(ArrayList<Tabla> tablas) {
+		
+		
+		// Coso para que los loggers se escriban el el .log y queden bonitos.
+		try {
+			FileHandler fH = new FileHandler("MyLogFile.log", 8096, 1, false);
+			for (Handler handler : LOGGER.getHandlers()) {
+				LOGGER.removeHandler(handler);
+			}
+			SimpleFormatter formatter = new SimpleFormatter();  
+			fH.setFormatter(formatter);
+			LOGGER.addHandler(fH);
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		LOGGER.log(Level.INFO, "Ventana general iniciada");
+		
+		
+		
+		
 		misSubventanas = new ArrayList<>();
 		// Configuración general
 		setTitle("Ventana General");
@@ -95,16 +124,16 @@ public class VentanaGeneral extends JFrame {
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
-
+						
 					for (int i = 0; i < tabla.size(); i++) {
-
+							
 						try {
 							Connection conn = DriverManager.getConnection("jdbc:sqlite:alumnitos.db");
 							Statement stmt = (Statement) conn.createStatement();
 							String instruccion = "INSERT INTO " + nombreTabla + " VALUES('" + tabla.get(i, 0) + "', '"
 									+ tabla.get(i, 1) + "' , '" + tabla.get(i, 2) + "' , '" + tabla.get(i, 3) + "' , '"
 									+ tabla.get(i, 4) + "');";
-							System.out.println(instruccion);
+							//System.out.println(instruccion);
 
 							int rs2 = stmt.executeUpdate(instruccion);
 
