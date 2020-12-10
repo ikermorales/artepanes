@@ -23,9 +23,13 @@ public class Contador {
 	public int get() { return cont; }
 	/** Incrementa el contador
 	 */
-	public void inc() { cont++; }
+	public void inc() { 
+		cont++; 
+	}
 	
-	public void inc( int inc ) { cont += inc; }
+	public void inc( int inc ) {
+		cont += inc; 
+	}
 	
 	@Override
 	public String toString() { return "" + cont; }
