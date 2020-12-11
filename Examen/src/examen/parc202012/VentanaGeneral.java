@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -20,7 +21,7 @@ import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class VentanaGeneral extends JFrame {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(VentanaGeneral.class.getName()); //LOGGERS
 
 	public static Color COLOR_GRIS_CLARITO = new Color(220, 220, 220);
@@ -33,10 +34,11 @@ public class VentanaGeneral extends JFrame {
 	private Runnable runEnCierre;
 	private JMenuItem itemBases;
 	private JMenuItem itemOrdenarNombre;
+	private JMenuItem itemSyso;
 
 	public VentanaGeneral(ArrayList<Tabla> tablas) {
-		
-		
+
+
 		// Coso para que los loggers se escriban el el .log y queden bonitos.
 		try {
 			FileHandler fH = new FileHandler("MyLogFile.log", 8096, 1, false);
@@ -50,13 +52,14 @@ public class VentanaGeneral extends JFrame {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			LOGGER.log(Level.INFO, "Esto ha dado un error");
 		}
 
 		LOGGER.log(Level.INFO, "Ventana general iniciada");
-		
-		
-		
-		
+
+
+
+
 		misSubventanas = new ArrayList<>();
 		// Configuración general
 		setTitle("Ventana General");
@@ -84,16 +87,33 @@ public class VentanaGeneral extends JFrame {
 
 		menuAcciones = new JMenu("Acciones");
 		menuAcciones.setMnemonic(KeyEvent.VK_A);
+
+		itemSyso= new JMenuItem("SYSO");
+		itemSyso.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("HOLA");
+				LOGGER.log(Level.INFO, "Se ha syseado hola");
+
+			}
+		});
+		menuAcciones.add(itemSyso);
+
+
 		itemBases = new JMenuItem("Basear");
 		menuAcciones.add(itemBases);
 
+
 		try {
-
+			
 			Class.forName("org.sqlite.JDBC");
-
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
+			
+		} catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
 		}
+
+
 
 		itemBases.addActionListener(new ActionListener() {
 
@@ -102,21 +122,21 @@ public class VentanaGeneral extends JFrame {
 				int contador = 0;
 				String nombreTabla = "";
 				for (Tabla tabla : tablas) {
-					
+
 					try {
 						Connection conn = DriverManager.getConnection("jdbc:sqlite:alumnitos.db");
 						Statement stmt = (Statement) conn.createStatement();
-						
+				
 						contador++;
 						nombreTabla = "Tabla" + contador;
-						
+
 						String instruccionBorrar = "DROP TABLE IF EXISTS " + nombreTabla + ";";
 						int rs = stmt.executeUpdate(instruccionBorrar);
 						// System.out.println(instruccionBorrar);
 
 						String instruccionCrear = "CREATE TABLE " + nombreTabla
 								+ "(NOMBRE VARCHAR(25), CORREO VARCHAR(50), DURACION VARCHAR(10), HORAU VARCHAR(5), HORAS VARCHAR(5));";
-						// System.out.println(instruccionCrear);
+						System.out.println(instruccionCrear);
 						int rs2 = stmt.executeUpdate(instruccionCrear);
 
 						stmt.close();
@@ -125,9 +145,9 @@ public class VentanaGeneral extends JFrame {
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
-						 
+
 					for (int i = 0; i < tabla.size(); i++) {
-							
+
 						try {
 							Connection conn = DriverManager.getConnection("jdbc:sqlite:alumnitos.db");
 							Statement stmt = (Statement) conn.createStatement();
@@ -135,7 +155,7 @@ public class VentanaGeneral extends JFrame {
 									+ tabla.get(i, 1) + "' , '" + tabla.get(i, 2) + "' , '" + tabla.get(i, 3) + "' , '"
 									+ tabla.get(i, 4) + "');";
 							//System.out.println(instruccion);
-							
+
 							int rs2 = stmt.executeUpdate(instruccion);
 
 						} catch (SQLException e1) {
@@ -147,28 +167,31 @@ public class VentanaGeneral extends JFrame {
 
 			}
 		});
-		
+
 		itemOrdenarNombre = new JMenuItem("Ordenar Nombre");
 		itemOrdenarNombre.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (Tabla tabla : tablas) {
 					tabla.ordenaTablaString(0);
 					repaint(); //TXALO PARA TY
+
 				}
-			
+
 			}
 		});
 		menuAcciones.add(itemOrdenarNombre);
-		
-		
-		
-		
-		
+
+
+
+
+
 		menuBar.add(menuAcciones);
 
 		setJMenuBar(menuBar);
+
+		LOGGER.log(Level.INFO, "Ventana general correctamente funcional");
 
 	}
 

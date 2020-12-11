@@ -21,7 +21,8 @@ public class VentanaDatos extends JInternalFrame {
 	private JScrollPane spDatos; // Scrollpane de la jtable
 	private JLabel lMensaje;  // Label de mensaje
 	private JPanel pBotonera; // Panel de botones
-	private VentanaGeneral ventMadre;  // Ventana madre
+	private VentanaGeneral ventMadre; // Ventana madre
+	private JButton botonPrueba;
 
 	private EventoEnCelda dobleClick;
 	private EventoEnCelda dobleClickHeader;
@@ -66,6 +67,19 @@ public class VentanaDatos extends JInternalFrame {
 		setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
 		// Creación de componentes y contenedores
 		pBotonera = new JPanel();
+		
+		botonPrueba = new JButton("PRUEBA");
+		botonPrueba.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("HOLA2");
+				
+			}
+		});
+		pBotonera.add(botonPrueba);
+		
+		
 		tDatos = new JTable();
 		lMensaje = new JLabel( " " );
 		lMensaje.setOpaque( true );
