@@ -7,20 +7,22 @@ import org.junit.Test;
 public class ContadorTest {
 
 	@Test
-	public void getTest() {
+	public void testGet() {
 		Contador cont = new Contador(0);
 		assertEquals(0, cont.get());
 	}
+	
 
 	@Test
-	public void incTest() {
+	public void testInc() {
 		Contador cont = new Contador(1);
 		cont.inc();
 		assertEquals(2, cont.get());
 	}
 	
+	
 	@Test
-	public void incTestNumero() {
+	public void testIncNumero() {
 		Contador cont = new Contador(1);
 		cont.inc(4);
 		assertEquals(5, cont.get());

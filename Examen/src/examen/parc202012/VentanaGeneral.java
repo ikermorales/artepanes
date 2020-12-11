@@ -102,14 +102,14 @@ public class VentanaGeneral extends JFrame {
 				int contador = 0;
 				String nombreTabla = "";
 				for (Tabla tabla : tablas) {
-
+					
 					try {
 						Connection conn = DriverManager.getConnection("jdbc:sqlite:alumnitos.db");
 						Statement stmt = (Statement) conn.createStatement();
-
+						
 						contador++;
 						nombreTabla = "Tabla" + contador;
-
+						
 						String instruccionBorrar = "DROP TABLE IF EXISTS " + nombreTabla + ";";
 						int rs = stmt.executeUpdate(instruccionBorrar);
 						// System.out.println(instruccionBorrar);
@@ -125,7 +125,7 @@ public class VentanaGeneral extends JFrame {
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
-						
+						 
 					for (int i = 0; i < tabla.size(); i++) {
 							
 						try {
@@ -135,7 +135,7 @@ public class VentanaGeneral extends JFrame {
 									+ tabla.get(i, 1) + "' , '" + tabla.get(i, 2) + "' , '" + tabla.get(i, 3) + "' , '"
 									+ tabla.get(i, 4) + "');";
 							//System.out.println(instruccion);
-
+							
 							int rs2 = stmt.executeUpdate(instruccion);
 
 						} catch (SQLException e1) {
